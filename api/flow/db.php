@@ -1,152 +1,158 @@
 <?php
 
-class Database {
- 
+class Database
+{
+
     private $host = "localhost";
     private $db_name = "flowmeter_db";
-    private $username = "flowmeter_user";
-    private $password = "s5R,ucJ!)@}W";
+    // private $username = "flowmeter_user";
+    private $username = "root";
+    // private $password = "s5R,ucJ!)@}W";
+    private $password = "";
     // database connection and table name
     private $conn;
- 
+
     // constructor with database connection
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = null;
- 
-        try{
+
+        try {
             $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->db_name, $this->username, $this->password);
             $this->conn->exec("set names utf8");
             $this->conn->exec("SET time_zone = '+05:30';");
-        }catch(PDOException $exception){
+        } catch (PDOException $exception) {
             echo "Connection error: " . $exception->getMessage();
         }
- 
     }
 
-    public function getValue($value_name, $required = true, $default = null) {
+    public function getValue($value_name, $required = true, $default = null)
+    {
         if (!empty($_REQUEST[$value_name])) {
             return filter_var($_REQUEST[$value_name], FILTER_SANITIZE_STRING);
-        } 
-        else {  
-            if($required) {
+        } else {
+            if ($required) {
                 http_response_code(400);
-    
+
                 // tell the user no products found
                 echo json_encode(
                     array("message" => "Required parameter '$value_name'.")
                 );
                 die();
-            }
-            else {
+            } else {
                 return $default;
             }
         }
     }
 
-    public function execute($query) {
-    
+    public function execute($query)
+    {
+
         // prepare query statement
         $stmt = $this->conn->prepare($query);
-    
+
         // execute query
         $stmt->execute();
-    
+
         return $stmt;
     }
 
-    public function check_user($user_key, $ip_address) {
+    public function check_user($user_key, $ip_address)
+    {
         // select all query
         $query = "SELECT user_id from software WHERE user_key='$user_key'";
-    
+
         // prepare query statement
         $stmt = $this->conn->prepare($query);
-    
+
         // execute query
         $stmt->execute();
 
         //$num = $stmt->rowCount();
 
-        if($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
             return $row['user_id'];
-        }
-        else {
+        } else {
             $query = "INSERT INTO register 
                         (user_key, ip_address) 
                     VALUES
                         ('$user_key', '$ip_address')
                     ";
-        
+
             // prepare query statement
             $stmt = $this->conn->prepare($query);
-        
+
             // execute query
             $stmt->execute();
             return 0;
         }
     }
 
-    public function check_device_type($device_number) {
+    public function check_device_type($device_number)
+    {
         // select all query
         $query = "SELECT device_type from devices WHERE device_number='$device_number'";
-    
+
         // prepare query statement
         $stmt = $this->conn->prepare($query);
-    
+
         // execute query
         $stmt->execute();
 
         //$num = $stmt->rowCount();
 
-        if($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
             return $row['device_type'];
-        }
-        else {
+        } else {
             return "none";
         }
     }
 
-    public function add_device($device_number, $device_friendly_name, $device_type, $user_id) {
+    public function add_device($device_number, $device_friendly_name, $device_type, $user_id)
+    {
         // select all query
         $query = "INSERT INTO devices 
                     (device_number, user_id, device_friendly_name, device_type) 
                   VALUES
                     ('$device_number', $user_id, '$device_friendly_name', '$device_type')
                 ";
-    
+
         // prepare query statement
         $stmt = $this->conn->prepare($query);
-    
+
         // execute query
         $stmt->execute();
 
-        if( $stmt->rowCount() > 0 )
+        if ($stmt->rowCount() > 0)
             return true;
         else
             return false;
     }
 
-    public function delete($device_number, $user_id) {
+    public function delete($device_number, $user_id)
+    {
         // select all query
         $query = "DELETE FROM devices 
                    WHERE
                   device_number = '$device_number' AND user_id = $user_id
                 ";
-    
+
         // prepare query statement
         $stmt = $this->conn->prepare($query);
-    
+
         // execute query
         $stmt->execute();
 
-        if( $stmt->rowCount() > 0 )
+        if ($stmt->rowCount() > 0)
             return true;
         else
             return false;
     }
-    
-    public function device_list($user_id) {
+
+    public function device_list($user_id)
+    {
         $query = "SELECT
                 device_number, device_friendly_name, update_time, if(update_time > now() - interval 1 day, 'ON', 'OFF') As dev_stat, dev_x, dev_y
                 FROM
@@ -159,14 +165,15 @@ class Database {
 
         // prepare query statement
         $stmt = $this->conn->prepare($query);
-    
+
         // execute query
         $stmt->execute();
-    
+
         return $stmt;
     }
 
-    public function device_list_ufm($user_id) {
+    public function device_list_ufm($user_id)
+    {
         $query = "SELECT
                 device_id, device_number, device_friendly_name, flow_rate, total_pos_flow, signal_strength, update_time
                 FROM
@@ -175,14 +182,15 @@ class Database {
 
         // prepare query statement
         $stmt = $this->conn->prepare($query);
-    
+
         // execute query
         $stmt->execute();
-    
+
         return $stmt;
     }
 
-    public function device_list_piezo($user_id) {
+    public function device_list_piezo($user_id)
+    {
         $query = "SELECT
                 device_number, device_friendly_name, `value`, unit, temp, update_time
                 FROM
@@ -191,23 +199,23 @@ class Database {
 
         // prepare query statement
         $stmt = $this->conn->prepare($query);
-    
+
         // execute query
         $stmt->execute();
-    
+
         return $stmt;
     }
 
-    public function device_update_ufm($device_number, $flow_rate, $total_pos_flow, $signal_strength) {
+    public function device_update_ufm($device_number, $flow_rate, $total_pos_flow, $signal_strength)
+    {
         $stmt = $this->conn->prepare("SELECT id FROM devices WHERE device_number='$device_number'");
-    
+
         // execute query
         $stmt->execute();
 
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $device_id = $row['id'];
-        }
-        else {
+        } else {
             return null;
         }
 
@@ -218,27 +226,26 @@ class Database {
                  ";
         // prepare query statement
         $stmt = $this->conn->prepare($query);
-    
+
         // execute query
         $stmt->execute();
 
-        if( $stmt->rowCount() > 0 )
+        if ($stmt->rowCount() > 0)
             return true;
         else
             return false;
-
     }
 
-    public function device_update_piezo($device_number, $value, $unit, $temp) {
+    public function device_update_piezo($device_number, $value, $unit, $temp)
+    {
         $stmt = $this->conn->prepare("SELECT id FROM devices WHERE device_number='$device_number'");
-    
+
         // execute query
         $stmt->execute();
 
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $device_id = $row['id'];
-        }
-        else {
+        } else {
             return null;
         }
 
@@ -249,18 +256,18 @@ class Database {
                  ";
         // prepare query statement
         $stmt = $this->conn->prepare($query);
-    
+
         // execute query
         $stmt->execute();
 
-        if( $stmt->rowCount() > 0 )
+        if ($stmt->rowCount() > 0)
             return true;
         else
             return false;
-
     }
 
-    public function device_history_ufm($user_id, $device_number) {
+    public function device_history_ufm($user_id, $device_number)
+    {
         $query = "SELECT
                 flow_rate, total_pos_flow, signal_strength, update_time, 'update_date'
                 FROM
@@ -271,14 +278,15 @@ class Database {
 
         // prepare query statement
         $stmt = $this->conn->prepare($query);
-    
+
         // execute query
         $stmt->execute();
-    
+
         return $stmt;
     }
 
-    public function device_history_piezo($user_id, $device_number) {
+    public function device_history_piezo($user_id, $device_number)
+    {
         $query = "SELECT
                 `value`, unit, temp, update_time, 'update_date'
                 FROM
@@ -289,11 +297,10 @@ class Database {
 
         // prepare query statement
         $stmt = $this->conn->prepare($query);
-    
+
         // execute query
         $stmt->execute();
-    
+
         return $stmt;
     }
-
 }
