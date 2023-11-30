@@ -20,17 +20,15 @@
         }
     </style>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            fetchAndDisplayData('https://api.thingspeak.com/channels/2345726/feeds.json?results=2');
-            fetchAndDisplayData('https://api.thingspeak.com/channels/2349674/feeds.json?api_key=NJ9MFKWZ6A8FU0O5&results=2');
-            fetchAndDisplayData('https://api.thingspeak.com/channels/2349685/feeds.json?api_key=0V0ALJLGIRYN6VWS&results=2');
-            fetchAndDisplayData('https://api.thingspeak.com/channels/2349689/feeds.json?api_key=BLA7BR1O1H2E2IBL&results=2');
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchAndDisplayData();
         });
 
-        function fetchAndDisplayData(apiUrl) {
-            fetch(apiUrl).then(res => {
-                return res.json();
-            })
+        function fetchAndDisplayData() {
+            //for sensor1
+            fetch('https://api.thingspeak.com/channels/2345726/feeds.json?results=20').then(res => {
+                    return res.json();
+                })
                 .then(data => {
                     var table = document.getElementById('data-table');
                     var tableBody = table.getElementsByTagName('tbody')[0];
@@ -68,10 +66,8 @@
             <tbody></tbody>
         </table>
     </div>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.71/jquery.csv-0.71.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.2/FileSaver.min.js"></script>
 </body>
-
 </html>

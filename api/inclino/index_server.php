@@ -4,53 +4,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Api testing</title>
+    <title>API Testing</title>
 </head>
 
 <body>
 
     <h1>Requests made</h1>
 
+    <label for="postDataInput">Enter JSON Data:</label>
+    <input type="text" id="postDataInput" placeholder='{"key": "value"}'>
     <button id="postDataBtn">Send Post</button>
 
     <h2>Received Data:</h2>
     <pre id="receivedData"></pre>
 
     <script>
-        // Function to make a POST request
         function sendPostRequest() {
-            // Assuming data to send
-            const postData = {
-                message: 'Hello from the client!'
-            };
+            // Get the JSON input from the user
+            const jsonInput = document.getElementById('postDataInput').value.trim();
 
-            // Make a POST request using Fetch API
-            fetch('server.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(postData),
-                })
-                .then(response => response.text())
-                .then(data => {
-                    alert(data); // Display the response from the server
-                    // Reload the page to fetch and display the updated data
-                    location.reload();
-                })
-                .catch(error => console.error('Error:', error));
+            try {
+                // Parse the user input as JSON
+                const postData = JSON.parse(jsonInput);
+
+                // Make a POST request using Fetch API
+                fetch('server.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(postData),
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data); // Display the response from the server
+
+                        // Fetch and display the updated data without reloading the page
+                        fetchAndDisplayData();
+                    })
+                    .catch(error => console.error('Error:', error));
+            } catch (error) {
+                console.error('Invalid JSON input:', error);
+                alert('Invalid JSON input. Please enter valid JSON.');
+            }
         }
 
-        // Attach the function to the button click event
+        function fetchAndDisplayData() {
+            // Make a GET request to retrieve and display the data
+            fetch('server.php')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('receivedData').innerText = JSON.stringify(data, null, 2);
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
         document.getElementById('postDataBtn').addEventListener('click', sendPostRequest);
 
-        // Make a GET request to retrieve and display the data
-        fetch('server.php')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('receivedData').innerText = data;
-            })
-            .catch(error => console.error('Error:', error));
+        // Fetch and display data when the page loads
+        fetchAndDisplayData();
     </script>
 
 </body>

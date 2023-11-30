@@ -23,12 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $receivedData = isset($_SESSION['receivedData']) ? $_SESSION['receivedData'] : null;
 
     // Display the received data on the webpage
-    echo '<html>
-            <head>
-                <title>Received Data</title>
-            </head>
-            <body>';
-
     if (!empty($receivedData)) {
         echo '<h2>Received Data:</h2>';
         echo '<pre>';
@@ -37,7 +31,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     } else {
         echo '<p>No data received yet.</p>';
     }
-
-    echo '</body>
-        </html>';
 }
+?>
