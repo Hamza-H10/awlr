@@ -10,9 +10,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // For simplicity, let's store it in a session variable
         session_start();
         $_SESSION['receivedData'] = $postData;
-        echo "Data received successfully!";
+        echo json_encode(["message" => "Data received successfully!"]);
+        exit; // Ensure no HTML content is added after echoing JSON
     } else {
-        echo "No data received!";
+        echo json_encode(["error" => "No data received!"]);
+        exit;
     }
 }
 
@@ -23,13 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $receivedData = isset($_SESSION['receivedData']) ? $_SESSION['receivedData'] : null;
 
     // Display the received data on the webpage
-    if (!empty($receivedData)) {
-        echo '<h2>Received Data:</h2>';
-        echo '<pre>';
-        print_r($receivedData);
-        echo '</pre>';
-    } else {
-        echo '<p>No data received yet.</p>';
-    }
+    header('Content-Type: application/json'); // Set content type to JSON
+    echo json_encode($receivedData);
+    exit;
 }
-?>
