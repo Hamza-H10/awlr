@@ -1,4 +1,5 @@
 <?php
+
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
@@ -23,19 +24,18 @@ $app->post('/login', function (Request $request, Response $response) {
     $salt2 = "pg!@";
 
     // Check if required fields are present in the request
-    if(isset($data['Email']) && $data['Email']!='' && isset($data['Password']) && $data['Password']!='' && isset($data['DeviceID']) && $data['DeviceID'] != '') {
+    if (isset($data['Email']) && $data['Email'] != '' && isset($data['Password']) && $data['Password'] != '' && isset($data['DeviceID']) && $data['DeviceID'] != '') {
         $email = $data['Email'];
         $password = $data['Password'];
         $deviceid = $data['DeviceID'];
         $date = date("Y-m-d H:i:s");
 
         // Check authentication using the authenticate method
-        if(!$objcon->authenticate($email, $password)){
+        if (!$objcon->authenticate($email, $password)) {
             $res['status'] = 'error';
             $res['message'] = 'Authentication error. Please check your Email and Password.';
             return json_encode($res);
-        }
-        else {
+        } else {
             $res['status'] = 'success';
             $res['message'] = 'Login successfully';
             $res['session_id'] = hash('SHA1', "$salt1$date$salt2");
@@ -48,7 +48,7 @@ $app->post('/login', function (Request $request, Response $response) {
             $query_res = mysqli_query($con, $sql);
 
             // Check if the update was successful
-            if($query_res == TRUE)
+            if ($query_res == TRUE)
                 return json_encode($res);
             else {
                 $res['status'] = 'error';
@@ -56,8 +56,7 @@ $app->post('/login', function (Request $request, Response $response) {
                 return json_encode($res);
             }
         }
-    }
-    else {
+    } else {
         $res['status'] = 'error';
         $res['message'] = 'Please enter your Email, Password and DeviceID.';
         return json_encode($res);
@@ -88,24 +87,22 @@ $app->post('/registration', function (Request $request, Response $response) {
     $row = mysqli_fetch_assoc($result);
 
     // Check if the email is already registered
-    if($row['Email'] == $email) {
+    if ($row['Email'] == $email) {
         $res['status'] = 'error';
         $res['message'] = 'Email already registered. Use forgot password or another email.';
         return json_encode($res);
-    }
-    else {
+    } else {
         // Generate a random OTP
         $otp = mt_rand(100000, 999999);
         $query = "INSERT INTO tbl_registration (`Name`, `Email`, `Password`, `Location`,`token`, `phone`, `otp`) VALUES ('$name','$email','$pass','$location','$token','$phone','$otp')";
         $result = mysqli_query($con, $query);
 
         // Check if the registration was successful
-        if($result == true) {
+        if ($result == true) {
             $res['status'] = 'success';
             $res['message'] = 'User Registration Complete.';
             return json_encode($res);
-        }
-        else {
+        } else {
             $res['status'] = 'error';
             $res['message'] = 'There was an error in registering the user.';
             return json_encode($res);
@@ -113,16 +110,15 @@ $app->post('/registration', function (Request $request, Response $response) {
     }
 });
 
-// Add new data in table endpoint
 $app->get('/adddevicedata/{token}/{device_number}/{value1}/{value2}/{value3}', function (Request $request, Response $response, $args) {
     $objcon = new db();
 
     // Check if the token is present in the URL
-    if(isset($args['token']) && $args['token']!='') {
+    if (isset($args['token']) && $args['token'] != '') {
         $token = $args['token'];
     }
     // Authenticate using the token
-    if(!$objcon->authenticate($token)) {
+    if (!$objcon->authenticate($token)) {
         $res['status'] = 'error';
         $res['message'] = 'Authentication error. Please check your access token.';
         $res['data'] = '';
@@ -130,15 +126,14 @@ $app->get('/adddevicedata/{token}/{device_number}/{value1}/{value2}/{value3}', f
     }
 
     // Check if required parameters are present in the URL
-    if(isset($args['device_number']) && $args['device_number']!='' && isset($args['value1']) && $args['value1']!='' && isset($args['value2']) && $args['value2']!='' && isset($args['value3']) && $args['value3']!='') {
+    if (isset($args['device_number']) && $args['device_number'] != '' && isset($args['value1']) && $args['value1'] != '' && isset($args['value2']) && $args['value2'] != '' && isset($args['value3']) && $args['value3'] != '') {
         $device_number = $args['device_number'];
         $value1 = $args['value1'];
         $value2 = $args['value2'];
         $value3 = $args['value3'];
-    }
-    else {
+    } else {
         $res['status'] = 'error';
-        $res['message'] = 'check required field(s).';
+        $res['message'] = 'Check required field(s).';
         $res['data'] = '';
         return json_encode($res);
     }
@@ -150,33 +145,33 @@ $app->get('/adddevicedata/{token}/{device_number}/{value1}/{value2}/{value3}', f
     $sql = "SELECT id FROM devices WHERE device_number = '$device_number' ";
     $query = mysqli_query($con, $sql);
     $output = mysqli_fetch_assoc($query);
-    //print_r($auth);
-    $device_id = $output['id'];
 
-	if(!empty($output)) {
-        $sql = "INSERT INTO `device_data` (device_id, value1, value2, value3, date_time) VALUES ($device_id,'$value1','$value2','$value3','".date('Y-m-d H:i:s')."')";
+    if (!empty($output)) {
+        $device_id = $output['id'];
+        $sql = "INSERT INTO `device_data` (device_id, value1, value2, value3, date_time) VALUES ($device_id,'$value1','$value2','$value3','" . date('Y-m-d H:i:s') . "')";
         $query = mysqli_query($con, $sql);
-        
-        if($query == TRUE){
+
+        if ($query == TRUE) {
             // If the data insertion is successful
-    		$res['status'] = 'success';
-    		$res['message'] = 'Data added successfully.';
-    		$res['data'] = '';
-    		return json_encode($res);
-        }
-        else{
+            $res['status'] = 'success';
+            $res['message'] = 'Data added successfully.';
+            $res['data'] = '';
+            return json_encode($res);
+        } else {
             // If there is an error in data insertion
-            $res['status'] = 'Error';
-    		$res['message'] = 'There is an error occured.';
-    		$res['data'] = '';
-    		return json_encode($res);
-    	}
-	}
-	else {
-	    
-	}
+            $res['status'] = 'error';
+            $res['message'] = 'There is an error occurred.';
+            $res['data'] = '';
+            return json_encode($res);
+        }
+    } else {
+        // If the device does not exist
+        $res['status'] = 'error';
+        $res['message'] = 'Device does not exist.';
+        $res['data'] = '';
+        return json_encode($res);
+    }
 });
 
 // Run the Slim application
 $app->run();
-?>
