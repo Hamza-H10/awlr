@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +14,7 @@
     <!-- DataTables JS -->
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 </head>
+
 <body>
     <div class="container mt-5">
         <h2>Flowmeter Device Data</h2>
@@ -31,21 +33,28 @@
 
     <!-- DataTables Initialization Script -->
     <script>
-       $(document).ready(function() {
-    var dataTable = $('#deviceDataTable').DataTable({
-        "ajax": {
-            "url": "http://localhost/awlr/api/fm/fm_api.php",
-            "dataSrc": "data" // Use "data" as the key for the array of objects
-        },
-        "columns": [
-            { "data": "device_number" },
-            { "data": "sensor" },
-            { "data": "value1" },
-            { "data": "value2" }
-        ]
-    });
-});
-
+        $(document).ready(function() {
+            var dataTable = $('#deviceDataTable').DataTable({
+                "ajax": {
+                    "url": "http://localhost/awlr/api/fm/fm_api.php",
+                    "dataSrc": "data" // Use "data" as the key for the array of objects
+                },
+                "columns": [{
+                        "data": "device_number"
+                    },
+                    {
+                        "data": "sensor"
+                    },
+                    {
+                        "data": "value1"
+                    },
+                    {
+                        "data": "value2"
+                    }
+                ]
+            });
+        });
     </script>
 </body>
+
 </html>
