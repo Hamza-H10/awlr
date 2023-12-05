@@ -1,6 +1,7 @@
 <?php
 
-require 'vendor/autoload.php';
+// require 'vendor/autoload.php';
+require 'C:\xampp\htdocs\awlr\api\vendor\autoload.php';
 
 use Slim\App;
 
