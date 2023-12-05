@@ -8,13 +8,17 @@
 // ini_set('log_errors', 1);
 
 // Assuming you have a MySQL database named 'site_alwr'
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "site_alwr";
+// $servername = "localhost";
+// $username = "root";
+// $password = "";
+// $dbname = "site_alwr";
+$dbhost = 'localhost';
+$dbuser = 'alwr_admin';
+$dbpass = 'admin@123';
+$dbname = 'site_alwr';
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
 
 // Check connection
 if ($conn->connect_error) {
