@@ -7,23 +7,40 @@
 // ini_set('display_errors', 0);
 // ini_set('log_errors', 1);
 
+//change here dont use the variables for database connection which is used elsewhere for make connection
 // Assuming you have a MySQL database named 'site_alwr'
 // $servername = "localhost";
 // $username = "root";
 // $password = "";
 // $dbname = "site_alwr";
-$dbhost = 'localhost';
-$dbuser = 'alwr_admin';
-$dbpass = 'admin@123';
+
+$servername = 'localhost';
+$username = 'alwr_admin';
+$password = 'admin@123';
 $dbname = 'site_alwr';
 
+// $dbhost = 'localhost';
+// $dbuser = 'alwr_admin';
+// $dbpass = 'admin@123';
+// $dbname = 'site_alwr';
+
+// $dbhost = 'localhost';
+// $dbuser = 'root';
+// $dbpass = '';
+// $dbname = 'site_alwr';
+
 // Create connection
-$conn = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
+$conn = new mysqli($servername , $username, $password, $dbname);
+// $conn = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
 
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+
+// add defaul indian timezone here
+// date_default_timezone_set('Asia/Kolkata');
+// $today = date('Y-m-d H:')
 
 // Handle GET request to insert data
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -35,8 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Only attempt to insert data if all parameters are present
     if ($deviceNumber && $sensor && $value1 && $value2) {
-        // Insert data into the 'flowmeter_device_data' table
-        $sqlInsert = "INSERT INTO flowmeter_device_data (device_number, sensor, value1, value2) VALUES ('$deviceNumber', '$sensor', '$value1', '$value2')";
+        // Insert data into the 'inclino_device_data' table
+        $sqlInsert = "INSERT INTO inclino_device_data (device_number, sensor, value1, value2) VALUES ('$deviceNumber', '$sensor', '$value1', '$value2')";
 
         if ($conn->query($sqlInsert) === TRUE) {
             echo "Data inserted successfully";
@@ -47,8 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 
 
-// Fetch data from the 'flowmeter_device_data' table
-$sqlSelect = "SELECT * FROM flowmeter_device_data";
+// Fetch data from the 'inclino_device_data' table
+$sqlSelect = "SELECT * FROM inclino_device_data";
 $result = $conn->query($sqlSelect);
 
 $data = array();

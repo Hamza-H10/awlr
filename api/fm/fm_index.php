@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flowmeter Device Data</title>
+    <title>Inclino Device Data</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- DataTables CSS -->
@@ -17,14 +17,15 @@
 
 <body>
     <div class="container mt-5">
-        <h2>Flowmeter Device Data</h2>
+        <h2>Inclino Device Data</h2>
         <table id="deviceDataTable" class="table table-striped">
             <thead>
                 <tr>
                     <th>Device Number</th>
                     <th>Sensor</th>
-                    <th>Value 1</th>
-                    <th>Value 2</th>
+                    <th>X Axis</th>
+                    <th>Y Axis</th>
+                    <th>Date Time</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -36,9 +37,9 @@
         $(document).ready(function() {
             var dataTable = $('#deviceDataTable').DataTable({
                 "ajax": {
-                    "url": "http://localhost/awlr/api/fm/fm_api.php",
-                    "dataSrc": "data" // Use "data" as the key for the array of objects
-                },
+    "url": "fm_api.php", // Relative path to the file
+    "dataSrc": "data"
+},
                 "columns": [{
                         "data": "device_number"
                     },
@@ -50,11 +51,13 @@
                     },
                     {
                         "data": "value2"
+                    },
+                    {
+                        "data": "date_time"
                     }
                 ]
             });
         });
     </script>
 </body>
-
 </html>
