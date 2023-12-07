@@ -39,8 +39,8 @@ if ($conn->connect_error) {
 }
 
 // add defaul indian timezone here
-// date_default_timezone_set('Asia/Kolkata');
-// $today = date('Y-m-d H:')
+date_default_timezone_set('Asia/Kolkata');
+// $today = date(''Y-m-d H:i:s')
 
 // Handle GET request to insert data
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -52,8 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Only attempt to insert data if all parameters are present
     if ($deviceNumber && $sensor && $value1 && $value2) {
+        // Get the current date and time in 'Asia/Kolkata' time zone
+        $currentDateTime = date('Y-m-d H:i:s');
+
         // Insert data into the 'inclino_device_data' table
         $sqlInsert = "INSERT INTO inclino_device_data (device_number, sensor, value1, value2) VALUES ('$deviceNumber', '$sensor', '$value1', '$value2')";
+
 
         if ($conn->query($sqlInsert) === TRUE) {
             echo "Data inserted successfully";
