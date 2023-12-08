@@ -110,6 +110,7 @@ $app->post('/registration', function (Request $request, Response $response) {
     }
 });
 
+//adding data to the particular device 
 $app->get('/adddevicedata/{token}/{device_number}/{value1}/{value2}/{value3}', function (Request $request, Response $response, $args) {
     $objcon = new db();
 
@@ -175,3 +176,4 @@ $app->get('/adddevicedata/{token}/{device_number}/{value1}/{value2}/{value3}', f
 
 // Run the Slim application
 $app->run();
+

@@ -26,6 +26,7 @@
                     <th>X Axis</th>
                     <th>Y Axis</th>
                     <th>Date Time</th>
+                    <th>Device status</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -54,6 +55,9 @@
                     },
                     {
                         "data": "date_time"
+                    },
+                    {
+                        "data": "device_status"
                     }
                 ]
             });
