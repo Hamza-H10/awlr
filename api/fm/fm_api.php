@@ -9,30 +9,14 @@
 
 //change here dont use the variables for database connection which is used elsewhere for make connection
 // Assuming you have a MySQL database named 'site_alwr'
-// $servername = "localhost";
-// $username = "root";
-// $password = "";
-// $dbname = "site_alwr";
 
 $servername = 'localhost';
 $username = 'alwr_admin';
 $password = 'admin@123';
 $dbname = 'site_alwr';
 
-// $dbhost = 'localhost';
-// $dbuser = 'alwr_admin';
-// $dbpass = 'admin@123';
-// $dbname = 'site_alwr';
-
-// $dbhost = 'localhost';
-// $dbuser = 'root';
-// $dbpass = '';
-// $dbname = 'site_alwr';
-
-
 // Create connection
 $conn = new mysqli($servername , $username, $password, $dbname);
-// $conn = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
 
 // Check connection
 if ($conn->connect_error) {
@@ -41,7 +25,6 @@ if ($conn->connect_error) {
 
 // add defaul indian timezone here
 date_default_timezone_set('Asia/Kolkata');
-// $today = date(''Y-m-d H:i:s')
 
 // Handle GET request to insert data
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -50,16 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $sensor = isset($_GET['sensor']) ? $_GET['sensor'] : null;
     $value1 = isset($_GET['value1']) ? $_GET['value1'] : null;
     $value2 = isset($_GET['value2']) ? $_GET['value2'] : null;
-    $deviceStatus = isset($_GET['$device_status']) ? $_GET['$device_status'] : null;
 
     // Only attempt to insert data if all parameters are present
-    if ($deviceNumber && $sensor && $value1 && $value2 && $deviceStatus) {
-        // Get the current date and time in 'Asia/Kolkata' time zone
-        $currentDateTime = date('Y-m-d H:i:s');
-
+    if ($deviceNumber && $sensor && $value1 && $value2) {
         // Insert data into the 'inclino_device_data' table
-        $sqlInsert = "INSERT INTO inclino_device_data (device_number, sensor, value1, value2, device_status) VALUES ('$deviceNumber', '$sensor', '$value1', '$value2', '$deviceStatus')";
-
+        $sqlInsert = "INSERT INTO inclino_device_data (device_number, sensor, value1, value2, date_time) VALUES ('$deviceNumber', '$sensor', '$value1', '$value2','" .date('Y-m-d H:i:s'). "')";
 
         if ($conn->query($sqlInsert) === TRUE) {
             echo "Data inserted successfully";
@@ -68,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         }
     }
 }
+
 
 // Fetch data from the 'inclino_device_data' table
 $sqlSelect = "SELECT * FROM inclino_device_data";

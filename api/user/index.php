@@ -114,7 +114,7 @@ if (!$result = $conn->query($sql)) {
         <div class="col-md-4 col-md-offset-4" id="erroralert" style="display: none;">
           <div class="alert alert-danger alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong>Oops!</strong> Somthing is wrong.
+            <strong>Oops!</strong> Something is wrong.
           </div>
         </div>
       </div>
@@ -185,5 +185,4 @@ if (!$result = $conn->query($sql)) {
     });
   });
 </script>
-
 </html>

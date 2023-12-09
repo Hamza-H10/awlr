@@ -16,6 +16,4 @@ VALUES ('$num', '$name')";
 		header('Location: index.php'); 
 	}	
 }
-
-
 ?>
