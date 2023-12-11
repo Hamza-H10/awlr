@@ -8,7 +8,8 @@
 // ini_set('log_errors', 1);
 
 //change here dont use the variables for database connection which is used elsewhere for make connection
-// Assuming you have a MySQL database named 'site_alwr'
+
+//the admin login here is working cause i when tried to login this page without skip-grant-tables in mysql.ini file then the localhost refused to connect and said you dont have the right to connect to admin. so just integrate the user and admin login in this.
 
 $servername = 'localhost';
 $username = 'alwr_admin';
@@ -46,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         }
     }
 }
-
 
 // Fetch data from the 'inclino_device_data' table
 $sqlSelect = "SELECT * FROM inclino_device_data";
