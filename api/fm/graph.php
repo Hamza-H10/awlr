@@ -19,13 +19,6 @@ include 'db_connection.php';
     </div>
 
     <script>
-        console.log('Before variable initialization');
-        let sensors = 8;
-        let depth = 5;
-        let borehole = 1;
-        let site = "office";
-        let location = "off";
-        console.log('After variable initialization');
     
     fetch('fm_api.php')
     .then(response => response.json())
