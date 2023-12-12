@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php
-// require("fm_api.php")
-?>
 
+<?php
+include 'header.php';
+include 'db_connection.php';
+?>
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
 </head>
 
 <body>
@@ -17,6 +19,27 @@
     </div>
 
     <script>
+        console.log('Before variable initialization');
+        let sensors = 8;
+        let depth = 5;
+        let borehole = 1;
+        let site = "office";
+        let location = "off";
+        console.log('After variable initialization');
+    
+    fetch('fm_api.php')
+    .then(response => response.json())
+    .then(data => {
+        // Use the fetched data here
+        console.log(data);
+    })
+    .catch(error => console.error('Error fetching data:', error));
+
+   
+    // Variable initializations here
+   
+
+
         const labels = [];
         const today = new Date();
 
@@ -74,5 +97,4 @@
         const myChart = new Chart(ctx, config);
     </script>
 </body>
-
 </html>

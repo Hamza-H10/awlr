@@ -1,4 +1,5 @@
 <?php
+
 // ini_set('display_errors', 1);
 // ini_set('display_startup_errors', 1);
 // error_reporting(E_ALL);
@@ -11,21 +12,8 @@
 
 //the admin login here is working cause i when tried to login this page without skip-grant-tables in mysql.ini file then the localhost refused to connect and said you dont have the right to connect to admin. so just integrate the user and admin login in this.
 
-$servername = 'localhost';
-$username = 'alwr_admin';
-$password = 'admin@123';
-$dbname = 'site_alwr';
 
-// Create connection
-$conn = new mysqli($servername , $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// add defaul indian timezone here
-date_default_timezone_set('Asia/Kolkata');
+include 'db_connection.php';
 
 // Handle GET request to insert data
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -70,3 +58,4 @@ header('Content-Type: application/json');
 echo json_encode($response);
 
 exit();
+?>
