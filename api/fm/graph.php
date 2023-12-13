@@ -20,6 +20,7 @@ include 'db_connection.php';
     </div>
 
     <script>
+        console.log('Script is running');
         let currentGraph = 'A'; // Initial graph type
         let chartInstance; // Store the Chart.js instance
 
