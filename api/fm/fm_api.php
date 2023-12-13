@@ -1,4 +1,7 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
 
 // ini_set('display_errors', 1);
 // ini_set('display_startup_errors', 1);
@@ -11,6 +14,7 @@
 //change here dont use the variables for database connection which is used elsewhere for make connection
 
 //the admin login here is working cause i when tried to login this page without skip-grant-tables in mysql.ini file then the localhost refused to connect and said you dont have the right to connect to admin. so just integrate the user and admin login in this.
+
 
 
 include 'db_connection.php';

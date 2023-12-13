@@ -5,89 +5,126 @@
 include 'header.php';
 include 'db_connection.php';
 ?>
+
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
 </head>
 
 <body>
     <div>
         <canvas id="myChart"></canvas>
+        <button onclick="toggleGraph()">Toggle Graph</button>
     </div>
 
     <script>
-    
-    fetch('fm_api.php')
-    .then(response => response.json())
-    .then(data => {
-        // Use the fetched data here
-        console.log(data);
-    })
-    .catch(error => console.error('Error fetching data:', error));
+        let currentGraph = 'A'; // Initial graph type
+        let chartInstance; // Store the Chart.js instance
 
-   
-    // Variable initializations here
-   
+        fetch('fm_api.php')
+            .then(response => response.json())
+            .then(data => {
+                // Use the fetched data here
+                console.log(data);
+                createChart(data);
+            })
+            .catch(error => console.error('Error fetching data:', error));
 
+        function createChart(data) {
+            const seriesCollection = [];
+            const uniqueSensors = Array.from(new Set(data.data.map(item => parseInt(item.sensor))));
+            const maxY = uniqueSensors.length * 5;
 
-        const labels = [];
-        const today = new Date();
+            // Loop through selected items
+            data.data.forEach(item => {
+                const sensor = parseInt(item.sensor);
+                const depth = (uniqueSensors.length - sensor) * 5;
+                const value = currentGraph === 'A' ? parseFloat(item.value1) : parseFloat(item.value2);
 
-        for (let i = 6; i >= 0; i--) {
-            const date = new Date(today);
-            date.setMonth(today.getMonth() - i);
-            labels.push(date.toLocaleDateString('default', {
-                month: 'long'
-            }));
-        }
-        const data = {
-            labels: labels,
-            datasets: [{
-                axis: 'y',
-                label: 'My First Dataset',
-                data: [65, 59, 80, 81, 56, 55, 40],
-                fill: false,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 159, 64, 0.2)',
-                    'rgba(255, 205, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(201, 203, 207, 0.2)'
-                ],
-                borderColor: [
-                    'rgb(255, 99, 132)',
-                    'rgb(255, 159, 64)',
-                    'rgb(255, 205, 86)',
-                    'rgb(75, 192, 192)',
-                    'rgb(54, 162, 235)',
-                    'rgb(153, 102, 255)',
-                    'rgb(201, 203, 207)'
-                ],
-                borderWidth: 1,
-                tension: 0.2
-            }]
-        };
-
-        const config = {
-            type: 'line',
-            data: data,
-            options: {
-                indexAxis: 'y',
-                scales: {
-                    x: {
-                        beginAtZero: true
-                    }
+                if (!seriesCollection[sensor]) {
+                    seriesCollection[sensor] = {
+                        title: `Sensor ${sensor}`,
+                        values: [],
+                        fill: false,
+                        borderColor: getRandomColor(),
+                        borderWidth: 1,
+                        tension: 0.2,
+                    };
                 }
-            }
-        };
 
-        const ctx = document.getElementById('myChart').getContext('2d');
-        const myChart = new Chart(ctx, config);
+                // Populate series with data points
+                seriesCollection[sensor].values.push({ x: value, y: depth });
+            });
+
+            const config = {
+                type: 'line',
+                data: {
+                    datasets: Object.values(seriesCollection),
+                },
+                options: {
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            min: -40,
+                            max: 40,
+                            ticks: {
+                                stepSize: 10,
+                            },
+                            title: {
+                                display: true,
+                                text: currentGraph === 'A' ? 'Displacement A (Deg)' : 'Displacement B (Deg)',
+                            },
+                        },
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            min: 0,
+                            max: maxY,
+                            ticks: {
+                                stepSize: 5,
+                                reverse: true,
+                                callback: function (value, index, values) {
+                                    return Math.abs(value) + 'm';
+                                },
+                            },
+                            title: {
+                                display: true,
+                                text: 'Depth (m)',
+                            },
+                        },
+                    },
+                },
+            };
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            chartInstance = new Chart(ctx, config);
+        }
+
+        function toggleGraph() {
+            currentGraph = currentGraph === 'A' ? 'B' : 'A';
+            chartInstance.destroy(); // Destroy the current chart instance
+            fetch('fm_api.php')
+                .then(response => response.json())
+                .then(data => {
+                    createChart(data);
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        // Function to generate random color
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
     </script>
 </body>
+
 </html>
