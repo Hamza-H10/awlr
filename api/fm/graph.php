@@ -58,7 +58,10 @@ include 'db_connection.php';
                 // Populate series with data points
                 seriesCollection[sensor].values.push({ x: value, y: depth });
             });
-
+// ----------------------------
+            // Print seriesCollection to the console
+    console.log('Series Collection:', seriesCollection);
+// ------------------------------
             const config = {
                 type: 'line',
                 data: {
