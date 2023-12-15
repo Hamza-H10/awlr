@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<?php
-include 'header.php';
-include 'db_connection.php';
-?>
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,8 +20,8 @@ include 'db_connection.php';
         console.log('Script is running');
         let currentGraph = 'A'; // Initial graph type
         let currentDataSetIndex = 0; // Index of the current data set
-        let chartInstance; // Store the Chart.js instance
         let sensorSets; // Array to store sets of 1 to 8 sensor data
+        let chartInstance; // Store the Chart.js instance
 
         fetch('fm_api.php')
             .then(response => response.json())
@@ -68,21 +63,16 @@ include 'db_connection.php';
 
                 if (!seriesCollection[sensor]) {
                     seriesCollection[sensor] = {
-                        title: `Sensor ${sensor}`,
-                        values: [],
-                        fill: false,
+                        label: `Sensor ${sensor}`,
+                        data: [],
                         borderColor: getRandomColor(),
                         borderWidth: 1,
-                        tension: 0.2,
+                        fill: false,
                     };
                 }
 
                 // Populate series with data points
-                seriesCollection[sensor].values.push({
-                    x: value,
-                    y: depth,
-                    label: `Value: ${value}\nDate Time: ${item.date_time}`
-                });
+                seriesCollection[sensor].data.push({ x: value, y: depth });
             });
 
             // Print seriesCollection to the console
@@ -94,13 +84,12 @@ include 'db_connection.php';
                     datasets: Object.values(seriesCollection),
                 },
                 options: {
-                    indexAxis: 'y',
                     scales: {
                         x: {
                             type: 'linear',
                             position: 'bottom',
-                            min: -40,
-                            max: 40,
+                            min: -60,
+                            max: 60,
                             ticks: {
                                 stepSize: 5,
                             },
@@ -112,12 +101,12 @@ include 'db_connection.php';
                         y: {
                             type: 'linear',
                             position: 'left',
-                            min: -maxY, // Make min negative to reverse the ticks
+                            min: -maxY,
                             max: 0,
                             ticks: {
                                 stepSize: 5,
-                                reverse: false, // Set reverse to false
-                                callback: function(value, index, values) {
+                                reverse: false,
+                                callback: function (value, index, values) {
                                     return Math.abs(value) + 'm';
                                 },
                             },
@@ -127,22 +116,8 @@ include 'db_connection.php';
                             },
                         },
                     },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.dataset.label || '';
-                                    if (label) {
-                                        return `${label}`;
-                                    }
-                                    return null;
-                                },
-                            },
-                        },
-                    },
                 },
             };
-            console.log('Chart config:', config);
 
             const ctx = document.getElementById('myChart').getContext('2d');
             chartInstance = new Chart(ctx, config);
