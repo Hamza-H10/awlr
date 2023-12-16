@@ -26,11 +26,10 @@
         fetch('fm_api.php')
             .then(response => response.json())
             .then(data => {
-                // Use the fetched data here
-                console.log(data);
-                // Divide the data into sets of 1 to 8 sensors
-                sensorSets = divideDataIntoSets(data.data, 8);
-                createChart(sensorSets[currentDataSetIndex]);
+                const sensorSets = divideDataIntoSets(data.data, 8); // Divide data into sets
+                sensorSets.forEach((data, index) => {
+                    createChart(data, index); // Call createChart for each set with its data and index
+                });
             })
             .catch(error => console.error('Error fetching data:', error));
 
@@ -42,8 +41,8 @@
             return sets;
         }
 
-        function createChart(data) {
-            console.log('Creating chart...');
+        function createChart(data, index) {
+            console.log(`Creating chart for set ${index + 1}...`);
 
             const seriesCollection = [];
             const maxY = data.length * 5;
@@ -68,7 +67,8 @@
                         borderColor: getRandomColor(),
                         borderWidth: 1,
                         pointRadius: 5,
-                        type: 'line',
+                        type: 'line', // Added line type
+                        tension: 0.5,
                     };
                 }
                 // Populate series with data points
@@ -79,68 +79,67 @@
             console.log('Series Collection:', seriesCollection);
 
             const config = {
-    type: 'line',
-    data: {
-        datasets: Object.values(seriesCollection),
-    },
-    options: {
-        scales: {
-            x: {
-                type: 'linear',
-                position: 'bottom',
-                min: -60,
-                max: 60,
-                ticks: {
-                    stepSize: 5,
-                    callback: function (value) {
-                        return value % 10 === 0 ? value : '\u200B'; // Add zero-width space for non-labeled ticks
+                type: 'line',
+                data: {
+                    datasets: Object.values(seriesCollection),
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            min: -60,
+                            max: 60,
+                            ticks: {
+                                stepSize: 5,
+                                callback: function (value) {
+                                    return value % 10 === 0 ? value : '\u200B'; // Add zero-width space for non-labeled ticks
+                                },
+                            },
+                            title: {
+                                display: true,
+                                text: currentGraph === 'A' ? 'Displacement A (Deg)' : 'Displacement B (Deg)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: (context) => context.tick.value === 0 ? 'rgba(0,0,0,1)' : 'rgba(0,0,0,0.1)',
+                                lineWidth: (context) => context.tick.value === 0 ? 0.75 : 1,
+                            },
+                        },
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            min: -maxY,
+                            max: 0,
+                            ticks: {
+                                stepSize: 5,
+                                reverse: false,
+                                callback: function (value, index, values) {
+                                    return Math.abs(value) + 'm';
+                                },
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Depth (m)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                        },
                     },
                 },
-                title: {
-                    display: true,
-                    text: currentGraph === 'A' ? 'Displacement A (Deg)' : 'Displacement B (Deg)',
-                    font: {
-                        size: 14,
-                        weight: 'bold'
-                    }
-                },
-                grid: {
-                    color: (context) => context.tick.value === 0 ? 'rgba(0,0,0,1)' : 'rgba(0,0,0,0.1)',
-                    lineWidth: (context) => context.tick.value === 0 ? 0.75 : 1,
-                },
-            },
-            y: {
-                type: 'linear',
-                position: 'left',
-                min: -maxY,
-                max: 0,
-                ticks: {
-                    stepSize: 5,
-                    reverse: false,
-                    callback: function (value, index, values) {
-                        return Math.abs(value) + 'm';
-                    },
-                    font: {
-                        size: 12,
-                        weight: 'bold'
-                    }
-                },
-                title: {
-                    display: true,
-                    text: 'Depth (m)',
-                    font: {
-                        size: 14,
-                        weight: 'bold'
-                    }
-                },
-            },
-        },
-    },
-};
+            };
 
-const ctx = document.getElementById('myChart').getContext('2d');
-chartInstance = new Chart(ctx, config);
-
+            const ctx = document.getElementById('myChart').getContext('2d');
+            chartInstance = new Chart(ctx, config);
         }
 
         function toggleGraph() {
