@@ -14,7 +14,7 @@
     </div>
 
 <script>
-
+function createChart(){
 const labels = Utils.months({count: 7});
 const data = {
   labels: labels,
@@ -45,7 +45,6 @@ const data = {
   }]
 };
 
-
 const config = {
   type: 'line',
   data: data,
@@ -58,7 +57,11 @@ const config = {
     }
   }
 };
-
+const ctx = document.getElementById('myChart').getContext('2d');
+    new Chart(ctx, config);
+}
+// Call the createChart function with test data
+createChart(testData);
 </script>
 </body>
 
