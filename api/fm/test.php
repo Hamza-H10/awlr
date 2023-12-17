@@ -28,8 +28,11 @@
             .then(data => {
                 // Use the fetched data here
                 console.log(data);
+                // console.log('data.data:' + data.data)
+                console.log(data.data[0])
                 // Divide the data into sets of 1 to 8 sensors
                 sensorSets = divideDataIntoSets(data.data, 8);
+                console.log('currentDataSetIndex: ' + currentDataSetIndex);
                 createChart(sensorSets[currentDataSetIndex]);
             })
             .catch(error => console.error('Error fetching data:', error));
@@ -39,6 +42,8 @@
             for (let i = 0; i < data.length; i += sensorsPerSet) {
                 sets.push(data.slice(i, i + sensorsPerSet));
             }
+            console.log('sets:' + sets);
+            console.log(sets);
             return sets;
         }
 
@@ -72,74 +77,77 @@
                     };
                 }
                 // Populate series with data points
-                seriesCollection[sensor].data.push({ x: value, y: depth });
+                seriesCollection[sensor].data.push({
+                    x: value,
+                    y: depth
+                });
             });
 
             // Print seriesCollection to the console
             console.log('Series Collection:', seriesCollection);
 
             const config = {
-    type: 'line',
-    data: {
-        datasets: Object.values(seriesCollection),
-    },
-    options: {
-        scales: {
-            x: {
-                type: 'linear',
-                position: 'bottom',
-                min: -60,
-                max: 60,
-                ticks: {
-                    stepSize: 5,
-                    callback: function (value) {
-                        return value % 10 === 0 ? value : '\u200B'; // Add zero-width space for non-labeled ticks
+                type: 'line',
+                data: {
+                    datasets: Object.values(seriesCollection),
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            min: -60,
+                            max: 60,
+                            ticks: {
+                                stepSize: 5,
+                                callback: function(value) {
+                                    return value % 10 === 0 ? value : '\u200B'; // Add zero-width space for non-labeled ticks
+                                },
+                            },
+                            title: {
+                                display: true,
+                                text: currentGraph === 'A' ? 'Displacement A (Deg)' : 'Displacement B (Deg)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: (context) => context.tick.value === 0 ? 'rgba(0,0,0,1)' : 'rgba(0,0,0,0.1)',
+                                lineWidth: (context) => context.tick.value === 0 ? 0.75 : 1,
+                            },
+                        },
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            min: -maxY,
+                            max: 0,
+                            ticks: {
+                                stepSize: 5,
+                                reverse: false,
+                                callback: function(value, index, values) {
+                                    return Math.abs(value) + 'm';
+                                },
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Depth (m)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                        },
                     },
                 },
-                title: {
-                    display: true,
-                    text: currentGraph === 'A' ? 'Displacement A (Deg)' : 'Displacement B (Deg)',
-                    font: {
-                        size: 14,
-                        weight: 'bold'
-                    }
-                },
-                grid: {
-                    color: (context) => context.tick.value === 0 ? 'rgba(0,0,0,1)' : 'rgba(0,0,0,0.1)',
-                    lineWidth: (context) => context.tick.value === 0 ? 0.75 : 1,
-                },
-            },
-            y: {
-                type: 'linear',
-                position: 'left',
-                min: -maxY,
-                max: 0,
-                ticks: {
-                    stepSize: 5,
-                    reverse: false,
-                    callback: function (value, index, values) {
-                        return Math.abs(value) + 'm';
-                    },
-                    font: {
-                        size: 12,
-                        weight: 'bold'
-                    }
-                },
-                title: {
-                    display: true,
-                    text: 'Depth (m)',
-                    font: {
-                        size: 14,
-                        weight: 'bold'
-                    }
-                },
-            },
-        },
-    },
-};
+            };
 
-const ctx = document.getElementById('myChart').getContext('2d');
-chartInstance = new Chart(ctx, config);
+            const ctx = document.getElementById('myChart').getContext('2d');
+            chartInstance = new Chart(ctx, config);
 
         }
 

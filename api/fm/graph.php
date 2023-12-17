@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<?php
-include 'header.php';
-include 'db_connection.php';
-?>
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,8 +20,8 @@ include 'db_connection.php';
         console.log('Script is running');
         let currentGraph = 'A'; // Initial graph type
         let currentDataSetIndex = 0; // Index of the current data set
-        let chartInstance; // Store the Chart.js instance
         let sensorSets; // Array to store sets of 1 to 8 sensor data
+        let chartInstance; // Store the Chart.js instance
 
         fetch('fm_api.php')
             .then(response => response.json())
@@ -35,6 +30,7 @@ include 'db_connection.php';
                 console.log(data);
                 // Divide the data into sets of 1 to 8 sensors
                 sensorSets = divideDataIntoSets(data.data, 8);
+                console.log('currentDataSetIndex: ' + currentDataSetIndex);
                 createChart(sensorSets[currentDataSetIndex]);
             })
             .catch(error => console.error('Error fetching data:', error));
@@ -44,105 +40,86 @@ include 'db_connection.php';
             for (let i = 0; i < data.length; i += sensorsPerSet) {
                 sets.push(data.slice(i, i + sensorsPerSet));
             }
+            console.log('sets:', sets);
+            console.log(sets);
             return sets;
         }
 
         function createChart(data) {
             console.log('Creating chart...');
 
-            const seriesCollection = [];
             const maxY = data.length * 5;
 
-            // Define depth values for each sensor
-            const depthValues = data.reduce((acc, item, index) => {
-                const sensor = parseInt(item.sensor);
-                acc[sensor] = -5 * index;
-                return acc;
-            }, {});
-
-            // Loop through selected items
-            data.forEach(item => {
-                const sensor = parseInt(item.sensor);
-                const depth = depthValues[sensor];
-                const value = currentGraph === 'A' ? parseFloat(item.value1) : parseFloat(item.value2);
-
-                if (!seriesCollection[sensor]) {
-                    seriesCollection[sensor] = {
-                        title: `Sensor ${sensor}`,
-                        values: [],
-                        fill: false,
-                        borderColor: getRandomColor(),
-                        borderWidth: 1,
-                        tension: 0.2,
-                    };
-                }
-
-                // Populate series with data points
-                seriesCollection[sensor].values.push({
-                    x: value,
-                    y: depth,
-                    label: `Value: ${value}\nDate Time: ${item.date_time}`
-                });
-            });
-
-            // Print seriesCollection to the console
-            console.log('Series Collection:', seriesCollection);
+            const sensors = data.map(item => item['sensor']);
+            const values = currentGraph === 'A' ? data.map(item => item['value1']) : data.map(item => item['value2']);
 
             const config = {
                 type: 'line',
                 data: {
-                    datasets: Object.values(seriesCollection),
+                    labels: values,
+                    datasets: [{
+                        data: sensors,
+                        label: currentGraph === 'A' ? 'Displacement A (Deg)' : 'Displacement B (Deg)',
+                        borderColor: getRandomColor(),
+                        borderWidth: 1,
+                        pointRadius: 5,
+                        type: 'line',
+                    }],
                 },
                 options: {
-                    indexAxis: 'y',
                     scales: {
                         x: {
                             type: 'linear',
                             position: 'bottom',
-                            min: -40,
-                            max: 40,
+                            min: -60,
+                            max: 60,
                             ticks: {
                                 stepSize: 5,
+                                callback: function(value) {
+                                    return value % 10 === 0 ? value : '\u200B'; // Add zero-width space for non-labeled ticks
+                                },
                             },
                             title: {
                                 display: true,
                                 text: currentGraph === 'A' ? 'Displacement A (Deg)' : 'Displacement B (Deg)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: (context) => context.tick.value === 0 ? 'rgba(0,0,0,1)' : 'rgba(0,0,0,0.1)',
+                                lineWidth: (context) => context.tick.value === 0 ? 0.75 : 1,
                             },
                         },
                         y: {
                             type: 'linear',
                             position: 'left',
-                            min: -maxY, // Make min negative to reverse the ticks
+                            min: -maxY,
                             max: 0,
                             ticks: {
                                 stepSize: 5,
-                                reverse: false, // Set reverse to false
+                                reverse: false,
                                 callback: function(value, index, values) {
                                     return Math.abs(value) + 'm';
                                 },
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
                             },
                             title: {
                                 display: true,
                                 text: 'Depth (m)',
-                            },
-                        },
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.dataset.label || '';
-                                    if (label) {
-                                        return `${label}`;
-                                    }
-                                    return null;
-                                },
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
                             },
                         },
                     },
                 },
             };
-            console.log('Chart config:', config);
 
             const ctx = document.getElementById('myChart').getContext('2d');
             chartInstance = new Chart(ctx, config);
