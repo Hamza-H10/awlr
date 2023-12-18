@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
 </head>
 
 <body>
@@ -14,6 +16,7 @@
         <button onclick="toggleGraph()">Toggle Graph</button>
         <button onclick="switchGraphSet('previous')">Previous</button>
         <button onclick="switchGraphSet('next')">Next</button>
+        <button onclick="downloadChart()">Download Chart</button>
     </div>
 
     <script>
@@ -24,106 +27,98 @@
         let chartInstance; // Store the Chart.js instance
 
         fetch('fm_api.php')
-            .then(response => response.json())
-            .then(data => {
-                // Use the fetched data here
-                console.log(data);
-                // Divide the data into sets of 1 to 8 sensors
-                sensorSets = divideDataIntoSets(data.data, 8);
-                console.log('currentDataSetIndex: ' + currentDataSetIndex);
-                createChart(sensorSets[currentDataSetIndex]);
-            })
-            .catch(error => console.error('Error fetching data:', error));
+    .then(response => response.json())
+    .then(data => {
+        // Use the fetched data here
+        console.log(data);
+        // Divide the data into sets of 1 to 8 sensors
+        sensorSets = divideDataIntoSets(data.data, 8);
+        console.log('currentDataSetIndex: ' + currentDataSetIndex);
+        createChart(sensorSets[currentDataSetIndex]);
+    })
+    .catch(error => console.error('Error fetching data:', error));
 
-        function divideDataIntoSets(data, sensorsPerSet) {
-            const sets = [];
-            for (let i = 0; i < data.length; i += sensorsPerSet) {
-                sets.push(data.slice(i, i + sensorsPerSet));
-            }
-            console.log('sets:', sets);
-            console.log(sets);
-            return sets;
-        }
+function divideDataIntoSets(data, sensorsPerSet) {
+    const sets = [];
+    for (let i = 0; i < data.length; i += sensorsPerSet) {
+        sets.push(data.slice(i, i + sensorsPerSet));
+    }
+    console.log('sets:', sets);
+    // console.log(sets);
+    return sets;
+}
 
-        function createChart(data) {
-            console.log('Creating chart...');
+// function createChart(data) {
+function createChart(data) {
+    console.log('Inside createChart, data:',data);
+    // console.log('data: ',data);
 
-            const maxY = data.length * 5;
+    const sensors = data.map(item => item['sensor']);
+    const values = currentGraph === 'A' ? data.map(item => item['value1']) : data.map(item => item['value2']);
 
-            const sensors = data.map(item => item['sensor']);
-            const values = currentGraph === 'A' ? data.map(item => item['value1']) : data.map(item => item['value2']);
-
-            const config = {
+    const config = {
+        type: 'line',
+        data: {
+            labels: values, // Use 'sensors' as labels on the y-axis
+            datasets: [{
+                data: sensors,
+                label: currentGraph === 'A' ? 'Displacement A (Deg)' : 'Displacement B (Deg)',
+                borderColor: getRandomColor(),
+                borderWidth: 1.75,
+                pointRadius: 5,
                 type: 'line',
-                data: {
-                    labels: values,
-                    datasets: [{
-                        data: sensors,
-                        label: currentGraph === 'A' ? 'Displacement A (Deg)' : 'Displacement B (Deg)',
-                        borderColor: getRandomColor(),
-                        borderWidth: 1,
-                        pointRadius: 5,
-                        type: 'line',
-                    }],
-                },
-                options: {
-                    scales: {
-                        x: {
-                            type: 'linear',
-                            position: 'bottom',
-                            min: -60,
-                            max: 60,
-                            ticks: {
-                                stepSize: 5,
-                                callback: function(value) {
-                                    return value % 10 === 0 ? value : '\u200B'; // Add zero-width space for non-labeled ticks
-                                },
-                            },
-                            title: {
-                                display: true,
-                                text: currentGraph === 'A' ? 'Displacement A (Deg)' : 'Displacement B (Deg)',
-                                font: {
-                                    size: 14,
-                                    weight: 'bold'
-                                }
-                            },
-                            grid: {
-                                color: (context) => context.tick.value === 0 ? 'rgba(0,0,0,1)' : 'rgba(0,0,0,0.1)',
-                                lineWidth: (context) => context.tick.value === 0 ? 0.75 : 1,
-                            },
-                        },
-                        y: {
-                            type: 'linear',
-                            position: 'left',
-                            min: -maxY,
-                            max: 0,
-                            ticks: {
-                                stepSize: 5,
-                                reverse: false,
-                                callback: function(value, index, values) {
-                                    return Math.abs(value) + 'm';
-                                },
-                                font: {
-                                    size: 12,
-                                    weight: 'bold'
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: 'Depth (m)',
-                                font: {
-                                    size: 14,
-                                    weight: 'bold'
-                                }
-                            },
+                fill: false,
+                tension: 0.3,
+                spanGaps: false
+            }],
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+
+                    ticks: {
+                        stepSize: 5,
+                        callback: function(value) {
+                            return value % 10 === 0 ? value : '\u200B'; // Add zero-width space for non-labeled ticks
                         },
                     },
+                    max: 40,
+                    min: -40,
+                    suggestedMax: 40,
+                    suggestedMin: -40,
+                    title: {
+                        display: true,
+                        text: currentGraph === 'A' ? 'Displacement A (Deg)' : 'Displacement B (Deg)',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: (context) => context.tick.value === 0 ? 'rgba(0,0,0,1)' : 'rgba(0,0,0,0.1)',
+                        lineWidth: (context) => context.tick.value === 0 ? 0.75 : 1,
+                    },
                 },
-            };
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Sensor',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    },
+                },
+            },
+        },
+    };
 
-            const ctx = document.getElementById('myChart').getContext('2d');
-            chartInstance = new Chart(ctx, config);
-        }
+    const ctx = document.getElementById('myChart').getContext('2d');
+    chartInstance = new Chart(ctx, config);
+}
+
 
         function toggleGraph() {
             console.log("inside toggleGraph function");
@@ -141,6 +136,20 @@
             chartInstance.destroy(); // Destroy the current chart instance
             createChart(sensorSets[currentDataSetIndex]);
         }
+
+        function downloadChart() {
+    const canvas = document.getElementById('myChart');
+
+    html2canvas(canvas).then(function(canvas) {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF();
+
+        pdf.addImage(imgData, 'PNG', 0, 0);
+        pdf.save('chart.pdf');
+    });
+}
+
+
 
         // Function to generate random color
         function getRandomColor() {

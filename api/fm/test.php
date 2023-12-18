@@ -118,10 +118,10 @@
                             },
                         },
                         y: {
-                            type: 'linear',
-                            position: 'left',
+                            // type: 'linear',
+                            // position: 'left',
                             min: -maxY,
-                            max: 0,
+                            // max: 0,
                             ticks: {
                                 stepSize: 5,
                                 reverse: false,
