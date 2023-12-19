@@ -47,19 +47,23 @@ function divideDataIntoSets(data, sensorsPerSet) {
     // console.log(sets);
     return sets;
 }
+// Function to convert sensor values to equivalent depth values
+function sensorDepth(sensorNumber) {
+    // Assuming sensor values 1 to 8 correspond to depth values -40m to -5m
+    return -40 + (sensorNumber - 1) * 5;
+}
 
-// function createChart(data) {
 function createChart(data) {
-    console.log('Inside createChart, data:',data);
-    // console.log('data: ',data);
+    console.log('Inside createChart, data:', data);
 
-    const sensors = data.map(item => item['sensor']);
+    const sensors = data.map(item => sensorDepth(item['sensor'])); // Use 'sensorDepth' function to get depth values
     const values = currentGraph === 'A' ? data.map(item => item['value1']) : data.map(item => item['value2']);
+    const dateTimes = data.map(item => item['date_time']); // Add this line to get date_time values
 
     const config = {
         type: 'line',
         data: {
-            labels: values, // Use 'sensors' as labels on the y-axis
+            labels: values,
             datasets: [{
                 data: sensors,
                 label: currentGraph === 'A' ? 'Displacement A (Deg)' : 'Displacement B (Deg)',
@@ -77,11 +81,10 @@ function createChart(data) {
                 x: {
                     type: 'linear',
                     position: 'bottom',
-
                     ticks: {
                         stepSize: 5,
                         callback: function(value) {
-                            return value % 10 === 0 ? value : '\u200B'; // Add zero-width space for non-labeled ticks
+                            return value % 10 === 0 ? value : '\u200B';
                         },
                     },
                     max: 40,
@@ -104,11 +107,26 @@ function createChart(data) {
                 y: {
                     title: {
                         display: true,
-                        text: 'Sensor',
+                        text: 'Sensor Depth',
                         font: {
                             size: 14,
                             weight: 'bold'
                         }
+                    },
+                },
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            const value = values[index];
+                            // const depth = sensors[index];
+                            const dateTime = dateTimes[index];
+                            return `Depth: ${value}, Date-Time: ${dateTime}`;
+                            // return `Depth: ${depth}, Date-Time: ${dateTime}`;
+    
+                        },
                     },
                 },
             },
@@ -148,7 +166,6 @@ function createChart(data) {
         pdf.save('chart.pdf');
     });
 }
-
 
 
         // Function to generate random color
