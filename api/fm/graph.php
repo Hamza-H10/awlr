@@ -26,17 +26,31 @@
         let sensorSets; // Array to store sets of 1 to 8 sensor data
         let chartInstance; // Store the Chart.js instance
 
-        fetch('fm_api.php')
+    //     fetch('fm_api.php')
+    // .then(response => response.json())
+    // .then(data => {
+    //     // Use the fetched data here
+    //     console.log(data);
+    //     // Divide the data into sets of 1 to 8 sensors
+    //     sensorSets = divideDataIntoSets(data.data, 8);
+    //     console.log('currentDataSetIndex: ' + currentDataSetIndex);
+    //     createChart(sensorSets[currentDataSetIndex]);
+    // })
+    // .catch(error => console.error('Error fetching data:', error));
+    //This will make the URL unique, and the browser won't retrieve it from the cache.
+const apiUrl = 'fm_api.php';
+const timestamp = new Date().getTime(); // Add timestamp to URL
+fetch(`${apiUrl}?t=${timestamp}`)
     .then(response => response.json())
     .then(data => {
-        // Use the fetched data here
-        console.log(data);
         // Divide the data into sets of 1 to 8 sensors
         sensorSets = divideDataIntoSets(data.data, 8);
         console.log('currentDataSetIndex: ' + currentDataSetIndex);
         createChart(sensorSets[currentDataSetIndex]);
+        
     })
     .catch(error => console.error('Error fetching data:', error));
+
 
 function divideDataIntoSets(data, sensorsPerSet) {
     const sets = [];
