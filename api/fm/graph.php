@@ -6,23 +6,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #myChart {
+            /* max-width: 500px;
+            max-height: 500px; */
+
+            margin: auto;
+            width: 600;
+            height: 400;
+
+
+
+            /* display: flex;
+            justify-content: center; */
+
+            /* display: grid;
+            place-items: center; */
+
+            /* Centers the child element(s) horizontally */
+            /* margin: 10px 20px 30px 500px; */
+
+            /* Adjust the max-width as needed */
+            /* Top margin set to 10px, right margin set to 20px, bottom margin set to 30px, left margin set to 40px */
+            display: block;
+        }
+
+        #controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #graphDetails {
+            text-align: left;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
 </head>
 
 <body>
     <div>
-        <canvas id="myChart"></canvas>
-        <div id="graphDetails">
-            <h3>Graph Details</h3>
-            <p id="sensorDetail">Sensor: </p>
-            <p id="deviceNumberDetail">Device Number: </p>
-            <p id="dateTimeDetail">Date-Time: </p>
+        <div id="controls">
+            <button onclick="toggleGraph()">Toggle Graph</button>
+            <button onclick="switchGraphSet('previous')">Previous</button>
+            <button onclick="switchGraphSet('next')">Next</button>
+            <button onclick="downloadChart()">Download Chart</button>
         </div>
-        <button onclick="toggleGraph()">Toggle Graph</button>
-        <button onclick="switchGraphSet('previous')">Previous</button>
-        <button onclick="switchGraphSet('next')">Next</button>
-        <button onclick="downloadChart()">Download Chart</button>
+        <div id="myChartContainer">
+            <canvas id="myChart"></canvas>
+            <div id="graphDetails">
+                <h3>Graph Details</h3>
+                <p id="sensorDetail">Sensor: </p>
+                <p id="deviceNumberDetail">Device Number: </p>
+                <p id="dateTimeDetail">Date-Time: </p>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -54,10 +96,11 @@
             return sets;
         }
         // Function to convert sensor values to equivalent depth values
-function sensorDepth(sensorNumber) {
-    // Assuming sensor values 1 to 8 correspond to depth values -40m to -5m
-    return -40 + (sensorNumber - 1) * 5;
-}
+        function sensorDepth(sensorNumber) {
+            // Assuming sensor values 1 to 8 correspond to depth values -40m to -5m
+            return -40 + (sensorNumber - 1) * 5;
+        }
+
         function createChart(data) {
             console.log('Inside createChart, data:', data);
 
