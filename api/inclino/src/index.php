@@ -1,13 +1,13 @@
 <?php
 session_start();
-require_once("dbcon.php");
-// if (!isset($_SESSION['user_session'])) {
-// header("Location: http://awlr.in/index.php");
-// header("Location: http://localhost/awlr/index.php");
-// } elseif (!isset($_SESSION['url']) and $_SESSION['url'] == $default_url_set) {
-// header("Location: http://awlr.in/index.php");
-// header("Location: http://localhost/awlr/index.php");
-// }
+require_once("../dbcon.php");
+if (!isset($_SESSION['user_session'])) {
+  // header("Location: http://awlr.in/index.php");
+  header("Location: http://localhost/awlr/index.php");
+} elseif (!isset($_SESSION['url']) and $_SESSION['url'] == $default_url_set) {
+  // header("Location: http://awlr.in/index.php");
+  header("Location: http://localhost/awlr/index.php");
+}
 $sql = "select * from devices";
 $details = array();
 $row = array();
@@ -28,8 +28,8 @@ if (!$result = $conn->query($sql)) {
   }
 }
 if ($row[0]['role'] != 1) {
-  header("Location: http://awlr.in/dashboard.php");
-  // header("Location: http://localhost/awlr/dashboard.php");
+  // header("Location: http://awlr.in/dashboard.php");
+  header("Location: http://localhost/awlr/dashboard.php");
 }
 
 $sql = "SELECT user_id,user_name FROM tbl_users WHERE user_id!=" . $_SESSION['user_session'];
@@ -67,6 +67,7 @@ if (!$result = $conn->query($sql)) {
 <body>
   <div class="container">
     <h2 class="text-center">Devices</h2>
+    TESTING INCLINO
     <div class="panel panel-default">
       <div class="panel-heading">
         <div class="row">
@@ -114,7 +115,7 @@ if (!$result = $conn->query($sql)) {
         <div class="col-md-4 col-md-offset-4" id="erroralert" style="display: none;">
           <div class="alert alert-danger alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong>Oops!</strong> Somthing is wrong.
+            <strong>Oops!</strong> Something is wrong.
           </div>
         </div>
       </div>
@@ -155,7 +156,6 @@ if (!$result = $conn->query($sql)) {
     </div>
   </div>
   </div>
-
 </body>
 <script type="text/javascript">
   $(document).ready(function() {
@@ -181,7 +181,7 @@ if (!$result = $conn->query($sql)) {
     $('#myTable').DataTable({
       dom: 'Bfrtip',
       buttons: [
-        // 'csv', 'excel'
+        'csv', 'excel'
       ]
     });
   });

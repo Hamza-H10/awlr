@@ -5,20 +5,23 @@ use Psr\Http\Message\ResponseInterface as Response;
 
 
 // Include necessary files
-require '../vendor/autoload.php';  // Autoload files using Composer
-require '../db.php';  // Include the database connection file
+// require '../vendor/autoload.php';  // Autoload files using Composer
+// require '../db.php';  // Include the database connection file
+require '../../vendor/autoload.php';  // Autoload files using Composer
+require '../../db.php';  // Include the database connection file
 
 // Set the default timezone
 date_default_timezone_set('Asia/Kolkata');
 
 // Create a new Slim application
 $app = new Slim\App();
-$approot = "http://www.awlr.in"; // with this statement the data is coming on the server from the postman
+// $approot = "http://www.awlr.in/"; // with this statement the data is coming on the server from the postman
+$approot = "http://www.awlr.in/inclino/"; // with this statement the data is coming on the server from the postman
 // $approot = "http://localhost/awlr";
 
 
 // Login authentication endpoint
-$app->post('/login', function (Request $request, Response $response) {
+$app->post('/loginInclino', function (Request $request, Response $response) {
     // Parse the request body to get data
     // $data = $request->getParsedBody();
     $data = $request->getBody();
@@ -67,7 +70,7 @@ $app->post('/login', function (Request $request, Response $response) {
 });
 
 // User registration endpoint
-$app->post('/registration', function (Request $request, Response $response) {
+$app->post('/registrationInclino', function (Request $request, Response $response) {
     // $data = $request->getParsedBody();
     $data = $request->getBody();
     $objcon = new db();
@@ -115,7 +118,7 @@ $app->post('/registration', function (Request $request, Response $response) {
 });
 
 //adding data to the particular device 
-$app->get('/adddevicedata/{token}/{device_number}/{value1}/{value2}/{value3}', function (Request $request, Response $response, $args) {
+$app->get('/adddevicedataInclino/{token}/{device_number}/{sensor}/{value1}/{value2}', function (Request $request, Response $response, $args) {
     $objcon = new db();
 
     // Check if the token is present in the URL
@@ -131,11 +134,11 @@ $app->get('/adddevicedata/{token}/{device_number}/{value1}/{value2}/{value3}', f
     }
 
     // Check if required parameters are present in the URL
-    if (isset($args['device_number']) && $args['device_number'] != '' && isset($args['value1']) && $args['value1'] != '' && isset($args['value2']) && $args['value2'] != '' && isset($args['value3']) && $args['value3'] != '') {
+    if (isset($args['device_number']) && $args['device_number'] != '' && isset($args['sensor']) && $args['sensor'] != '' && isset($args['value1']) && $args['value1'] != '' && isset($args['value2']) && $args['value2'] != '') {
         $device_number = $args['device_number'];
+        $sensor = $args['sensor'];
         $value1 = $args['value1'];
         $value2 = $args['value2'];
-        $value3 = $args['value3'];
     } else {
         $res['status'] = 'error';
         $res['message'] = 'Check required field(s).';
@@ -147,13 +150,13 @@ $app->get('/adddevicedata/{token}/{device_number}/{value1}/{value2}/{value3}', f
     $con = $objcon->connect();
 
     // Check if the device number exists in the database
-    $sql = "SELECT id FROM devices WHERE device_number = '$device_number' ";
+    $sql = "SELECT id FROM inclino_devices WHERE device_number = '$device_number' "; //this is the id(primary key 'auto increament') which is getting fetched and passed into $output whose value is getting stored in the $device_id
     $query = mysqli_query($con, $sql);
     $output = mysqli_fetch_assoc($query);
 
     if (!empty($output)) {
         $device_id = $output['id'];
-        $sql = "INSERT INTO `device_data` (device_id, value1, value2, value3, date_time) VALUES ($device_id,'$value1','$value2','$value3','" . date('Y-m-d H:i:s') . "')";
+        $sql = "INSERT INTO `inclino_device_data` (device_id, sensor, value1, value2, date_time) VALUES ($device_id,'$sensor','$value1','$value2','" . date('Y-m-d H:i:s') . "')";
         $query = mysqli_query($con, $sql);
 
         if ($query == TRUE) {

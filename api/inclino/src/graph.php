@@ -8,26 +8,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         #myChart {
-            /* max-width: 500px;
-            max-height: 500px; */
+            max-width: 500px;
+            max-height: 600px;
 
-            margin: auto;
+            /* margin: auto; */
             width: 600;
             height: 400;
 
-
-
-            /* display: flex;
-            justify-content: center; */
-
-            /* display: grid;
-            place-items: center; */
-
-            /* Centers the child element(s) horizontally */
-            /* margin: 10px 20px 30px 500px; */
-
-            /* Adjust the max-width as needed */
-            /* Top margin set to 10px, right margin set to 20px, bottom margin set to 30px, left margin set to 40px */
             display: block;
         }
 
@@ -81,6 +68,10 @@
             .then(data => {
                 // Divide the data into sets of 1 to 8 sensors
                 sensorSets = divideDataIntoSets(data.data, 8);
+
+                // Reverse the order of sensorSets
+                sensorSets = sensorSets.reverse();
+
                 console.log('currentDataSetIndex: ' + currentDataSetIndex);
                 createChart(sensorSets[currentDataSetIndex]);
                 updateGraphDetails(sensorSets[currentDataSetIndex][0]); // Update graph details

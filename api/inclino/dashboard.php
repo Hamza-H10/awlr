@@ -1,16 +1,19 @@
 <?php
 include('include/header.php');
-// include __DIR__ . '/../include/header.php';
+// include __DIR__ . '/../../include/header.php'; 
 ?>
-<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-<link href="bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
+<!-- <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen"> -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap-theme.min.css" rel="stylesheet">
+
 <style>
 	.cwhite {
 		color: #FFFFFF
 	}
 
 	.body-container {
-		background: url(Doc2-1.jpg);
+		/* background: url(Doc2-1.jpg); */
 		background-repeat: repeat;
 		background-position-x: 0%;
 		background-position-y: 0%;
@@ -90,11 +93,11 @@ include('include/header.php');
 
 
 			<div class="col-md-12" style="margin-top:15px">
-				TESTING AWLR
+				TESTING INCLINO
 				<?php
 
 				if ($core_user_role == 0 or $core_user_role == 1) {
-					$stmt = $db->prepare("SELECT * FROM tbl_users WHERE user_id=:uid");
+					$stmt = $db->prepare("SELECT * FROM inclino_tbl_users WHERE user_id=:uid");
 					$stmt->execute(array(":uid" => $_SESSION['user_session']));
 					$temp_array = explode(',', $row['mobile']);
 					foreach ($temp_array as $temp_val) {
