@@ -1,4 +1,7 @@
-<?php include('include/header.php'); ?>
+<?php
+// include('include/header.php');
+include __DIR__ . '/../../include/header.php'; ?>
+?>
 <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 <link href="bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
 <style>
@@ -20,7 +23,7 @@
   }
 </style>
 <div class="body-container">
-  TESTING AWLR
+  TESTING INCLINO
   <div class="container">
     <div class="row">
       <div class="col-md-12" style="margin-top:15px">
@@ -63,7 +66,7 @@
 
                 <?php
                 $rown = 0;
-                $stmt = $db->prepare("SELECT * FROM tbl_users order by user_id asc  ");
+                $stmt = $db->prepare("SELECT * FROM inclino_tbl_users order by user_id asc  ");
                 $stmt->execute();
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                   $rown = $rown + 1;

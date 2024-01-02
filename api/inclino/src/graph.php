@@ -9,7 +9,12 @@
     <style>
         #myChart {
             max-width: 500px;
-            max-height: 500px;
+            max-height: 600px;
+
+            /* margin: auto; */
+            width: 600;
+            height: 400;
+
             display: block;
         }
 

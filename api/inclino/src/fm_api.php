@@ -17,7 +17,12 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 
 
-include 'db_connection.php';
+require 'db_connection.php';
+
+//below both methods are not working 
+// require '../db.php'; // check how can db_connection.php be required from another folder
+// require_once __DIR__ . '/api/inclino/modal/db_connection.php';
+
 
 // Handle GET request to insert data
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -30,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Only attempt to insert data if all parameters are present
     if ($deviceNumber && $sensor && $value1 && $value2) {
         // Insert data into the 'inclino_device_data' table
-        $sqlInsert = "INSERT INTO inclino_device_data (device_number, sensor, value1, value2, date_time) VALUES ('$deviceNumber', '$sensor', '$value1', '$value2','" .date('Y-m-d H:i:s'). "')";
+        $sqlInsert = "INSERT INTO inclino_device_data (device_number, sensor, value1, value2, date_time) VALUES ('$deviceNumber', '$sensor', '$value1', '$value2','" . date('Y-m-d H:i:s') . "')";
 
         if ($conn->query($sqlInsert) === TRUE) {
             echo "Data inserted successfully";
@@ -62,4 +67,3 @@ header('Content-Type: application/json');
 echo json_encode($response);
 
 exit();
-?>
