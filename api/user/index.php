@@ -68,7 +68,7 @@ if (!$result = $conn->query($sql)) {
   <div class="container">
 
     <h2 class="text-center">Devices</h2>
-    TESTING AWLR
+    <!-- TESTING AWLR -->
     <div class="panel panel-default">
       <div class="panel-heading">
         <div class="row">

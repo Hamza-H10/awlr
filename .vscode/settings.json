@@ -1,4 +1,4 @@
 {
-    "editor.inlineSuggest.showToolbar": "onHover",
-    "docwriter.hotkey.windows": "Alt + ."
+  "editor.inlineSuggest.showToolbar": "onHover",
+  "docwriter.hotkey.windows": "Alt + ."
 }

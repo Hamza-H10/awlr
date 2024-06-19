@@ -64,7 +64,16 @@ echo $htm;
     $('#example').DataTable({
       dom: 'Bfrtip',
       buttons: [
-        'csv', 'excel'
+        'csv', 'excel',
+        {
+          text: 'Graph',
+          action: function(e, dt, button, config) {
+            // Add your custom action for the Graph button here
+            // alert('Graph button clicked!');
+            var device_id = <?= $device_id ?>;
+            window.location.href = "graph_index.php?d_id=" + device_id;
+          }
+        }
       ]
     });
 

@@ -90,7 +90,7 @@ include('include/header.php');
 
 
 			<div class="col-md-12" style="margin-top:15px">
-				TESTING AWLR
+				<!-- TESTING AWLR -->
 				<?php
 
 				if ($core_user_role == 0 or $core_user_role == 1) {
