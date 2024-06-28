@@ -91,7 +91,7 @@ if (isset($_POST["action"])) {
 
         if ($result->rowCount() == 0) {
             $output = array(
-                "error" => "NO DATA FOUND FOR THE SELECTED DATE RANGE"
+                "error" => "No Data! DATA NOT FOUND FOR THE SELECTED DATE RANGE"
             );
             echo json_encode($output);
         } else {

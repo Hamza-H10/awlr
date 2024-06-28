@@ -70,6 +70,18 @@ $d_id = isset($_GET['d_id']) ? $_GET['d_id'] : null;
         padding: 5px;
         /* Add padding to create space between border and content */
     }
+
+    #refreshButton {
+        background-color: lightblue;
+        color: black;
+        transition: background-color 0.3s;
+        /* Add smooth transition effect */
+    }
+
+    #refreshButton:hover {
+        background-color: steelblue;
+        color: white;
+    }
 </style>
 
 <body>
@@ -82,7 +94,7 @@ $d_id = isset($_GET['d_id']) ? $_GET['d_id'] : null;
                     <div class="col col-sm-9"> <!-- Adjust column size as needed -->
                         <strong> Data Device </strong>
 
-                        <!-- <button id="refreshButton" class="btn btn-secondary ms-auto float-end" style="background-color: lightgrey; color: black;">Chart Reload</button> -->
+                        <button id="refreshButton" class="btn btn-secondary ms-auto float-end">Chart Reload</button>
                     </div>
                     <div class="col col-sm-3">
                         <input type="text" id="daterange_textbox" class="form-control" readonly />
@@ -92,7 +104,7 @@ $d_id = isset($_GET['d_id']) ? $_GET['d_id'] : null;
             <div class="card-body">
                 <div class="table-responsive">
                     <div class="chart-container pie-chart">
-                        <!-- <canvas id="bar_chart" height="60"> </canvas> -->
+                        <canvas id="bar_chart" height="60"> </canvas>
                     </div>
                     <table class="table table-striped table-bordered" id="order_table">
                         <thead>
@@ -165,35 +177,41 @@ $d_id = isset($_GET['d_id']) ? $_GET['d_id'] : null;
                 },
                 "drawCallback": function(settings) {
                     var date = [];
-                    var sale = [];
-                    var value = [];
-                    var sale_diff = [];
+                    var values = [];
+                    // var value = [];
+                    var values_diff = [];
 
                     for (var count = 0; count < settings.aoData.length; count++) {
                         date.push(settings.aoData[count]._aData[3]); //settings.aoData[count] is an array of objects that contains the data for the sales.
-                        sale.push(parseFloat(settings.aoData[count]._aData[0]));
+                        values.push(parseFloat(settings.aoData[count]._aData[0]));
                         // flowrate.push(parseFloat(settings.aoData[count]._aDate[0]));
                     }
 
-                    // Calculate the differences between consecutive elements in the sale array
-                    for (var i = 0; i < sale.length - 1; i++) {
-                        // for (var i = 0; i <= sale.length; i++) {
-                        var nextSale = sale[i + 1] !== undefined ? sale[i + 1] : 0;
-                        var diff = sale[i] - nextSale;
-                        // var diff = sale[i] - sale[i + 1];
+                    // Calculate the differences between consecutive elements in the values array
+                    for (var i = 0; i < values.length - 1; i++) {
+                        // for (var i = 0; i <= values.length; i++) {
+                        var nextSale = values[i + 1] !== undefined ? values[i + 1] : 0;
+                        var diff = values[i] - nextSale;
+                        // var diff = values[i] - values[i + 1];
 
-                        // sale_diff.push(sale[i] - sale[i + 1]);
-                        sale_diff.push(diff < 0 ? 0 : diff);
+                        // values_diff.push(values[i] - values[i + 1]);
+                        values_diff.push(diff < 0 ? 0 : diff);
                     }
 
-                    // Update the original sale array with the differences
-                    for (var j = 0; j < sale_diff.length; j++) {
-                        sale[j] = sale_diff[j];
-                    }
+                    // Update the original values array with the differences
+                    // for (var j = 0; j < values_diff.length; j++) {
+                    //     values[j] = values_diff[j];
+                    // }
 
-                    // Remove the last element from the original sale array
-                    sale.pop();
-                    date.pop();
+                    // Remove the last element from the original values array
+                    // values.pop();
+                    // date.pop();
+
+                    var formattedValues = values.map(function(value) {
+
+
+                        return parseFloat(value).toFixed(2);
+                    });
 
                     var chart_data = {
                         labels: date, //lables for the x-axis
@@ -201,27 +219,34 @@ $d_id = isset($_GET['d_id']) ? $_GET['d_id'] : null;
                             label: 'value',
                             // backgroundColor: 'rgb(255, 205, 86)',
                             // backgroundColor: 'rgba(127,255,212,0.5)',
-                            backgroundColor: 'red',
+
+                            backgroundColor: 'rgba(0,128,128,0.65)',
+                            // backgroundColor: 'rgba(0,0,139,0.65)',
+
                             // backgroundColor: 'rgb(106, 156, 168)',
                             borderColor: 'rgba(127,250,212,10)',
                             color: '#fff',
-                            // data: sale,
-                            data: sale_diff,
+                            data: formattedValues,
+                            // data: values_diff,
                             borderWidth: 1,
                             datalabels: {
-                                color: 'darkgreen',
+                                color: 'black',
+                                // color: 'darkblue',
                                 // color: borderColor,
                                 anchor: 'end',
                                 align: 'top',
                                 offset: '5',
                                 // font: 'bold'
                                 // backgroundColor: 'rgba(0,191,255,0.2)',
-                                backgroundColor: 'rgba(255,192,203,0.5',
+
+                                backgroundColor: 'rgba(102,178,178,0.5)',
+                                // backgroundColor: 'rgba(135,206,235,0.8)',
                                 borderColor: 'rgba(127,255,212,5)',
                                 // borderWidth: 1,
                                 borderRadius: 5,
                                 font: {
-                                    weight: 'bold'
+                                    weight: 'bold',
+                                    size: 9
                                 }
                             }
                         }]
